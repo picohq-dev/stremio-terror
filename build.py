@@ -80,7 +80,7 @@ def main():
         shutil.rmtree(OUT)
     write("manifest.json", MANIFEST)
     open(os.path.join(OUT, ".nojekyll"), "w").close()
-    for label, slug in DECADES:
+    for i, (label, slug) in enumerate(DECADES):
         metas = fetch(slug)
         if not metas:
             sys.exit("%s came back empty" % slug)
@@ -93,6 +93,11 @@ def main():
             # Apps put the extras in either order.
             write("catalog/movie/terror/%s&skip=%d.json" % (genre, skip), page)
             write("catalog/movie/terror/skip=%d&%s.json" % (skip, genre), page)
+            # Nuvio opens the catalog with no genre: show the first decade, as Stremio does.
+            if i == 0:
+                if skip == 0:
+                    write("catalog/movie/terror.json", page)
+                write("catalog/movie/terror/skip=%d.json" % skip, page)
         print("%-10s %5d filmes" % (label, len(metas)))
 
 
